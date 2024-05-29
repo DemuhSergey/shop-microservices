@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Shop {
+  id          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title       String       @unique @db.VarChar(50)
+  description String       @db.VarChar(250)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime?    @updatedAt
+  hasDeleted  Boolean      @default(false)
+  goods       Good[]
+  users  UserOnShop[]
+}
+
+model Good {
+  id          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title       String       @db.VarChar(50)
+  description String       @db.VarChar(250)
+  price       Int
+  currency    Currency
+  discount    String       @db.VarChar(2)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime?    @updatedAt
+  hasDeleted  Boolean      @default(false)
+  shopId      String       @db.Uuid
+  shop        Shop         @relation(fields: [shopId], references: [id])
+}
+
+// model ShopOnGood {
+//   shopId     String    @db.Uuid
+//   goodId     String    @db.Uuid
+//   createdAt  DateTime  @default(now())
+//   updatedAt  DateTime? @updatedAt
+//   hasDeleted Boolean   @default(false)
+//   good       Good      @relation(fields: [goodId], references: [id])
+//   shop       Shop      @relation(fields: [shopId], references: [id])
+
+//   @@id([shopId, goodId])
+// }
+
+model User {
+  id         String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  firstName  String
+  lastName   String
+  role       Role
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime?    @updatedAt
+  hasDeleted Boolean      @default(false)
+  shops      UserOnShop[]
+}
+
+model UserOnShop {
+  shopId     String    @db.Uuid
+  userId     String    @db.Uuid
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime? @updatedAt
+  hasDeleted Boolean   @default(false)
+  user       User      @relation(fields: [userId], references: [id])
+  shop       Shop      @relation(fields: [shopId], references: [id])
+
+  @@id([shopId, userId])
+}
+
+enum Role {
+  Main
+  DeliveryManager
+  SuperVisor
+  SalesMan
+}
+
+enum Currency {
+  USD
+  EUR
+  BYN
+  RUB
+}

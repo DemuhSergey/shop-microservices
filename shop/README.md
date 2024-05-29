@@ -1,84 +1,33 @@
-## Description
+# NestJS Prisma Docker
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+> DON'T commit .env files into version control, add `.env` to `.gitignore`. `.env` files are added here as an example.
 
-## Installation
-
-```bash
-$ npm install
-```
-
-## Running the app
+Develop the Nest application
 
 ```bash
-# development
-$ npm run start
+npm install
 
-# watch mode
-$ npm run start:dev
+cp .env.example .env
 
-# production mode
-$ npm run start:prod
+npx prisma generate
+
+npm run start:dev
 ```
 
-## Test
+## Docker File
+
+Get started by running
 
 ```bash
-# unit tests
-$ npm run test
+docker build -t nest-api .
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+docker run -p 3000:3000 --env-file .env -d nest-api
 ```
 
-## Support
+## Docker Compose
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
-
-## DBStructure
-
-Shop table:
-id: guid;
-title: description;
-description: string;
-goods: good[];
-createdAt: Date;
-updatetAd: Date;
-hasDeleted: bool;
-users: Users[];
-
-User table:
-id: guid;
-shopId: guid;
-userId: guid;
-createdAt: Date;
-updatetAd: Date;
-hasDeleted: bool;
-role: SuperVisor | Main | DeliveryManager;
-
-
-Good table:
-id: guid;
-title: description;
-description: string;
-price: money;
-discount: string;
-createdAt: Date;
-updatetAd: Date;
-hasDeleted: bool;
-shop: Shop[];
-
-postrgresSql - Prisma
+```bash
+docker-compose up
+# or detached
+docker-compose up -d
+```
