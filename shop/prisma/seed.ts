@@ -6,13 +6,9 @@ const prisma = new PrismaClient();
 
 
 async function main() {
-
     await prisma.user.createMany({
         data: Users
-    });
-
-
-    await Promise.all(
+    }).then(() => Promise.all(
         Shops.map(async (shop) => {
             const goods = shop.goods;
             delete shop.goods;
@@ -49,7 +45,7 @@ async function main() {
         return prisma.userOnShop.createMany({
             data
         });
-    })
+    }));
 }
 
 main()

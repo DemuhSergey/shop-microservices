@@ -72,4 +72,4 @@ const Shops = [{
 }
 ];
 
-export { users, shops }
+export { Users, Shops }
