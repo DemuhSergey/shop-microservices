@@ -1,21 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { CreateShopDto } from '../dto/create-shop.dto';
-import { UpdateShopDto } from '../dto/update-shop.dto';
 import { PrismaService } from '../../prisma/prisma.service';
-import { Filtering } from 'src/util/decorators/filtering.decorator';
-import { Pagination } from 'src/util/decorators/pagination.decorator';
-import { Sorting } from 'src/util/decorators/sorting.decorator';
 import { getPagination, getOrder, getWhere } from 'src/util/helpers/table.helper';
-import { Shop } from '@prisma/client';
+import { ITableParamsDto } from 'src/util/dto/table-params.dto';
+import { UpdateShopDto } from '../dto/update-shop.dto';
+import { CreateShopDto } from '../dto/create-shop.dto';
 
 @Injectable()
 export class ShopService {
 
-  constructor(private prismaService: PrismaService) {
+  constructor(private prismaService: PrismaService) { }
 
-  }
-
-  create(dto: Omit<Shop, 'goods' | 'users' | 'id'>) {
+  async create(dto: CreateShopDto) {
     return this.prismaService.shop.create({
       data: {
         ...dto
@@ -23,30 +18,27 @@ export class ShopService {
     }).then(x => x.id);
   }
 
-  findAll(
-    pagination: Pagination,
-    sort?: Sorting,
-    filter?: Filtering,
-  ) {
+  async findAll(params: ITableParamsDto) {
 
     return this.prismaService.shop.findMany({
-      ...getPagination(pagination),
-      ...getOrder(sort),
+      ...getPagination(params.pagination),
+      ...getOrder(params.sort),
       include: {
         goods: true
       },
       where: {
-        ...getWhere(filter)
+        ...getWhere(params.filter)
       }
     })
   }
 
-  update(id: string, dto: Omit<Shop, 'goods' | 'users'>) {
+  async update(id: string, dto: UpdateShopDto) {
     return this.prismaService.shop.update({
       data: {
-        ...dto
+        ...dto,
+        updatedAt: new Date()
       },
-      where: { id: dto.id }
+      where: { id }
     }).then(x => x.id);
   }
 

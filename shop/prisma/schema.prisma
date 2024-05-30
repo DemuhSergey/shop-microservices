@@ -32,22 +32,11 @@ model Good {
   shop        Shop         @relation(fields: [shopId], references: [id])
 }
 
-// model ShopOnGood {
-//   shopId     String    @db.Uuid
-//   goodId     String    @db.Uuid
-//   createdAt  DateTime  @default(now())
-//   updatedAt  DateTime? @updatedAt
-//   hasDeleted Boolean   @default(false)
-//   good       Good      @relation(fields: [goodId], references: [id])
-//   shop       Shop      @relation(fields: [shopId], references: [id])
-
-//   @@id([shopId, goodId])
-// }
-
 model User {
   id         String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   firstName  String
   lastName   String
+  userAppId  String? 
   role       Role
   createdAt  DateTime     @default(now())
   updatedAt  DateTime?    @updatedAt

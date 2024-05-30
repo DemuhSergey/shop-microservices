@@ -1,30 +1,30 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus } from '@nestjs/common';
-import { ShopService } from '../services/shop.service';
-import { CreateShopDto } from '../dto/create-shop.dto';
-import { UpdateShopDto } from '../dto/update-shop.dto';
+import { GoodService } from '../services/good.service';
+import { CreateGoodDto } from '../dto/create-good.dto';
+import { UpdateGoodDto } from '../dto/update-good.dto';
 import { FilteringParams, Filtering } from 'src/util/decorators/filtering.decorator';
 import { PaginationParams, Pagination } from 'src/util/decorators/pagination.decorator';
 import { SortingParams, Sorting } from 'src/util/decorators/sorting.decorator';
-import { Shop } from '@prisma/client';
 
-@Controller('shop')
-export class ShopController {
-  constructor(private readonly shopService: ShopService) { }
+@Controller('good')
+export class GoodController {
+  constructor(private readonly goodService: GoodService) { }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createShopDto: Omit<Shop, 'goods' | 'users' | 'id'>) {
-    return this.shopService.create(createShopDto);
+  create(@Body() createGoodDto: CreateGoodDto) {
+    return this.goodService.create(createGoodDto);
   }
 
-  @Get()
-  @HttpCode(HttpStatus.OK)
+  @Get(':shopId')
   findAll(
+    @Param('shopId') shopId: string,
     @PaginationParams() paginationParams: Pagination,
     @SortingParams(['id', 'description', 'title']) sort?: Sorting,
     @FilteringParams(['id', 'description', 'title']) filter?: Filtering
   ) {
-    return this.shopService.findAll({
+    return this.goodService.findAll(
+      shopId, {
       pagination: paginationParams,
       sort,
       filter
@@ -34,18 +34,18 @@ export class ShopController {
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   findOne(@Param('id') id: string) {
-    return this.shopService.findOne(id);
+    return this.goodService.findOne(id);
   }
 
   @Patch(':id')
   @HttpCode(HttpStatus.OK)
-  update(@Param('id') id: string, @Body() dto: UpdateShopDto) {
-    return this.shopService.update(id, dto);
+  update(@Param('id') id: string, @Body() updateGoodDto: UpdateGoodDto) {
+    return this.goodService.update(id, updateGoodDto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
   remove(@Param('id') id: string) {
-    return this.shopService.remove(id);
+    return this.goodService.remove(id);
   }
 }

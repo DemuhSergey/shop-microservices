@@ -6,6 +6,11 @@ const prisma = new PrismaClient();
 
 
 async function main() {
+
+    if(!(await prisma.shop.findFirst())) {
+        return;
+    }
+
     await prisma.user.createMany({
         data: Users
     }).then(() => Promise.all(
